@@ -2,6 +2,7 @@ package com.nxstage.nxgamelist.domain.service;
 
 import com.nxstage.nxgamelist.api.dto.GameDTO;
 import com.nxstage.nxgamelist.api.dto.GameMinDTO;
+import com.nxstage.nxgamelist.api.dto.GameMinProjection;
 import com.nxstage.nxgamelist.domain.exception.GameNotFoundException;
 import com.nxstage.nxgamelist.domain.model.Game;
 import com.nxstage.nxgamelist.domain.repository.GameRepository;
@@ -32,5 +33,13 @@ public class GameService {
         Game game = gameRepository.findById(id).orElseThrow(()->
                 new GameNotFoundException(id));
         return new GameDTO(game);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GameMinDTO> findByList(Long listId){
+        List<GameMinProjection> games = gameRepository.searchByList(listId);
+
+        return games.stream().map(
+                game -> new GameMinDTO(game)).collect(Collectors.toList());
     }
 }
